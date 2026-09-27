@@ -1,0 +1,14 @@
+[
+  {
+    "id": "cust_101",
+    "name": "Alice Smith",
+    "email": "alice@example.com",
+    "notes": "Prefers email communication and requested order updates."
+  },
+  {
+    "id": "cust_102",
+    "name": "Bob Jones",
+    "email": "bob@example.com",
+    "notes": "Interested in subscription plans."
+  }
+]
