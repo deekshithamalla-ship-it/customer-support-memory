@@ -1,0 +1,29 @@
+[
+  {
+    "ticket_id": "TICK-1001",
+    "customer_id": "cust_101",
+    "issue": "Order delayed",
+    "status": "resolved",
+    "date": "2026-08-12",
+    "frustration_level": "high",
+    "resolution": "Order was located and delivery was rescheduled."
+  },
+  {
+    "ticket_id": "TICK-1002",
+    "customer_id": "cust_101",
+    "issue": "Unable to update delivery address",
+    "status": "resolved",
+    "date": "2026-08-25",
+    "frustration_level": "medium",
+    "resolution": "Address was updated manually by support."
+  },
+  {
+    "ticket_id": "TICK-2001",
+    "customer_id": "cust_102",
+    "issue": "Subscription payment failed",
+    "status": "resolved",
+    "date": "2026-08-18",
+    "frustration_level": "medium",
+    "resolution": "Customer updated the payment method."
+  }
+]

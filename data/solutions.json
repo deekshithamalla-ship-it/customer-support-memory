@@ -1,0 +1,20 @@
+[
+  {
+    "customer_id": "cust_101",
+    "issue": "Order delay",
+    "solution": "Delivery was rescheduled",
+    "worked": true
+  },
+  {
+    "customer_id": "cust_101",
+    "issue": "Address update",
+    "solution": "Support manually updated the delivery address",
+    "worked": true
+  },
+  {
+    "customer_id": "cust_102",
+    "issue": "Subscription payment failure",
+    "solution": "Updated payment method",
+    "worked": true
+  }
+]

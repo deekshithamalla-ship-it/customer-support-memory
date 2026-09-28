@@ -1,32 +1,635 @@
 <!DOCTYPE html>
+
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Customer Support That Remembers</title>
+
+    <title>Hindsight | AI Support</title>
+
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
-    <div class="container">
-        <header>
-            <h1>Customer Support That Remembers</h1>
-            <p>AI-powered customer support with long-term memory</p>
-        </header>
 
-        <main>
-            <div id="chat-box" class="chat-box">
-                <div class="message system">
-                    Welcome to Customer Support! How can we help you today?
+<body>
+
+    <div class="app">
+
+        <!-- TOP BAR -->
+        <header class="topbar">
+
+            <div class="brand">
+
+                <div class="brand-icon">
+                    H
                 </div>
+
+                <div>
+                    <h1>Hindsight</h1>
+                    <p>Memory-powered customer support</p>
+                </div>
+
             </div>
 
-            <form id="chat-form" class="chat-form">
-                <input type="text" id="user-input" placeholder="Type your message here..." required autocomplete="off">
-                <button type="submit">Send</button>
-            </form>
+            <div class="system-status">
+
+                <span class="status-dot"></span>
+
+                System Online
+
+            </div>
+
+        </header>
+
+
+        <!-- MAIN DASHBOARD -->
+        <main class="dashboard">
+
+
+            <!-- LEFT: CUSTOMERS -->
+            <aside class="sidebar">
+
+                <div class="section-title">
+
+                    <span>
+                        Customers
+                    </span>
+
+                    <button
+                        class="add-btn"
+                        id="addCustomerButton"
+                        title="Add customer"
+                        type="button">
+                        +
+                    </button>
+
+                </div>
+
+
+                <div class="search-box">
+
+                    🔍
+
+                    <input
+                        type="text"
+                        id="customerSearch"
+                        placeholder="Search customers..."
+                    >
+
+                </div>
+
+
+                <div
+                    class="customer-list"
+                    id="customerList">
+
+
+                    <!-- ALICE -->
+
+                    <div
+                        class="customer active"
+                        data-customer-id="cust_101"
+                        data-name="Alice Smith"
+                        data-email="alice@example.com">
+
+                        <div class="avatar alice">
+                            AS
+                        </div>
+
+                        <div class="customer-info">
+
+                            <strong>
+                                Alice Smith
+                            </strong>
+
+                            <span>
+                                alice@example.com
+                            </span>
+
+                        </div>
+
+                        <span class="online"></span>
+
+                        <button
+                            class="customer-menu"
+                            type="button"
+                            title="Customer options">
+                            ⋮
+                        </button>
+
+                    </div>
+
+
+                    <!-- BOB -->
+
+                    <div
+                        class="customer"
+                        data-customer-id="cust_102"
+                        data-name="Bob Jones"
+                        data-email="bob@example.com">
+
+                        <div class="avatar bob">
+                            BJ
+                        </div>
+
+                        <div class="customer-info">
+
+                            <strong>
+                                Bob Jones
+                            </strong>
+
+                            <span>
+                                bob@example.com
+                            </span>
+
+                        </div>
+
+                        <button
+                            class="customer-menu"
+                            type="button"
+                            title="Customer options">
+                            ⋮
+                        </button>
+
+                    </div>
+
+
+                </div>
+
+
+                <div
+                    id="noCustomers"
+                    class="no-customers"
+                    style="display:none;">
+
+                    No customers found.
+
+                </div>
+
+
+            </aside>
+
+
+
+            <!-- CENTER: CHAT -->
+            <section class="conversation">
+
+
+                <!-- CUSTOMER HEADER -->
+                <div class="conversation-header">
+
+                    <div class="profile">
+
+                        <div
+                            class="avatar alice large"
+                            id="conversationAvatar">
+                            AS
+                        </div>
+
+                        <div>
+
+                            <h2 id="conversationTitle">
+                                Alice Smith
+                            </h2>
+
+                            <span>
+
+                                <span class="green-dot"></span>
+
+                                Returning customer
+
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="header-actions">
+
+                        <button
+                            id="headerCustomerInfo"
+                            title="Customer information"
+                            type="button">
+                            👤
+                        </button>
+
+                        <button
+                            id="headerMoreOptions"
+                            title="More options"
+                            type="button">
+                            ⋮
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- CHAT -->
+                <div
+                    class="messages"
+                    id="messages">
+
+                    <div class="date-divider">
+                        Today
+                    </div>
+
+
+                    <div class="message-row bot-row">
+
+                        <div class="bot-avatar">
+                            H
+                        </div>
+
+                        <div>
+
+                            <div class="message-label">
+                                Hindsight AI
+                            </div>
+
+                            <div class="message bot">
+
+                                Hello Alice! 👋
+
+                                <br><br>
+
+                                I have your previous support history available.
+                                How can I help you today?
+
+                            </div>
+
+                            <div class="message-time">
+                                Just now
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- INPUT -->
+                <div class="input-container">
+
+                    <div class="input-box">
+
+                        <button
+                            class="input-icon"
+                            type="button"
+                            title="Add attachment">
+                            +
+                        </button>
+
+                        <input
+                            type="text"
+                            id="messageInput"
+                            placeholder="Ask Hindsight anything..."
+                        >
+
+                        <button
+                            id="sendButton"
+                            class="send-button"
+                            type="button">
+                            ➤
+                        </button>
+
+                    </div>
+
+                    <p class="input-hint">
+                        Hindsight uses customer history to personalize responses.
+                    </p>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- RIGHT: MEMORY -->
+            <aside class="memory-panel">
+
+
+                <div class="memory-header">
+
+                    <div>
+
+                        <h2>
+                            🧠 Customer Memory
+                        </h2>
+
+                        <p>
+                            Relevant history
+                        </p>
+
+                    </div>
+
+                    <span class="memory-active">
+                        ACTIVE
+                    </span>
+
+                </div>
+
+
+
+                <!-- MEMORY RECALL -->
+                <div
+                    class="memory-card highlight"
+                    id="memoryRecallCard">
+
+                    <div class="memory-card-header">
+
+                        <span>
+                            🧠 Memory Recall
+                        </span>
+
+                        <span
+                            class="memory-count"
+                            id="memoryCount">
+                            3
+                        </span>
+
+                    </div>
+
+                    <p>
+                        Relevant memories found for this conversation.
+                    </p>
+
+                </div>
+
+
+
+                <!-- MEMORY LIST -->
+                <div
+                    id="memoryList"
+                    class="memory-list">
+
+                    <!-- Default static information -->
+
+                    <div class="memory-section">
+
+                        <h3>
+                            Previous Issues
+                        </h3>
+
+                        <div class="memory-item">
+
+                            <div class="memory-icon">
+                                📦
+                            </div>
+
+                            <div>
+
+                                <strong>
+                                    Order delay
+                                </strong>
+
+                                <span>
+                                    Aug 12, 2026
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="memory-item">
+
+                            <div class="memory-icon">
+                                📍
+                            </div>
+
+                            <div>
+
+                                <strong>
+                                    Address update
+                                </strong>
+
+                                <span>
+                                    Aug 25, 2026
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="memory-section">
+
+                        <h3>
+                            Known Issues
+                        </h3>
+
+                        <div class="tag">
+                            Delivery delays
+                        </div>
+
+                    </div>
+
+
+                    <div class="memory-section">
+
+                        <h3>
+                            Solutions That Worked
+                        </h3>
+
+                        <div class="solution">
+
+                            <span>✓</span>
+
+                            <p>
+                                Delivery was rescheduled
+                            </p>
+
+                        </div>
+
+
+                        <div class="solution">
+
+                            <span>✓</span>
+
+                            <p>
+                                Address updated manually
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- CUSTOMER PROFILE -->
+                <div class="profile-card">
+
+                    <h3>
+                        Customer Profile
+                    </h3>
+
+                    <div class="profile-row">
+
+                        <span>
+                            Email
+                        </span>
+
+                        <strong id="profileEmail">
+                            alice@example.com
+                        </strong>
+
+                    </div>
+
+                    <div class="profile-row">
+
+                        <span>
+                            Preferred contact
+                        </span>
+
+                        <strong>
+                            Email
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+            </aside>
+
+
         </main>
+
     </div>
 
+
+
+    <!-- =====================================================
+         ADD CUSTOMER MODAL
+    ====================================================== -->
+
+    <div
+        class="modal-overlay"
+        id="addCustomerModal"
+        style="display:none;">
+
+        <div class="modal">
+
+            <div class="modal-header">
+
+                <div>
+
+                    <h2>
+                        Add Customer
+                    </h2>
+
+                    <p>
+                        Create a new persistent customer
+                    </p>
+
+                </div>
+
+                <button
+                    id="closeCustomerModal"
+                    class="modal-close"
+                    type="button">
+                    ×
+                </button>
+
+            </div>
+
+
+            <form id="customerForm">
+
+                <div class="form-group">
+
+                    <label for="newCustomerName">
+                        Customer Name
+                    </label>
+
+                    <input
+                        id="newCustomerName"
+                        type="text"
+                        placeholder="e.g. Charlie Brown"
+                        autocomplete="off"
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="newCustomerEmail">
+                        Email
+                    </label>
+
+                    <input
+                        id="newCustomerEmail"
+                        type="email"
+                        placeholder="e.g. charlie@example.com"
+                        autocomplete="off"
+                    >
+
+                </div>
+
+
+                <div class="modal-actions">
+
+                    <button
+                        id="cancelCustomer"
+                        class="cancel-btn"
+                        type="button">
+                        Cancel
+                    </button>
+
+                    <button
+                        id="saveCustomer"
+                        class="save-btn"
+                        type="submit">
+                        Add Customer
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         CUSTOMER CONTEXT MENU
+    ====================================================== -->
+
+    <div
+        class="context-menu"
+        id="customerContextMenu"
+        style="display:none;">
+
+        <button
+            id="viewCustomer"
+            type="button">
+            👤 View Customer
+        </button>
+
+        <button
+            id="deleteCustomer"
+            type="button">
+            🗑 Delete Customer
+        </button>
+
+    </div>
+
+
+
     <script src="script.js"></script>
+
 </body>
+
 </html>

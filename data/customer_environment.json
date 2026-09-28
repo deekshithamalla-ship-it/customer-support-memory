@@ -1,0 +1,16 @@
+[
+  {
+    "customer_id": "cust_101",
+    "device": "Windows Laptop",
+    "browser": "Chrome",
+    "app_version": "Web",
+    "location": "India"
+  },
+  {
+    "customer_id": "cust_102",
+    "device": "Android Phone",
+    "browser": "Chrome Mobile",
+    "app_version": "5.2.1",
+    "location": "India"
+  }
+]

@@ -1,0 +1,14 @@
+[
+  {
+    "customer_id": "cust_101",
+    "issue": "Delivery delays",
+    "frequency": "2 previous tickets",
+    "details": "Customer previously experienced delayed deliveries."
+  },
+  {
+    "customer_id": "cust_102",
+    "issue": "Subscription payment failure",
+    "frequency": "1 previous ticket",
+    "details": "Previous payment failure was resolved by updating the payment method."
+  }
+]

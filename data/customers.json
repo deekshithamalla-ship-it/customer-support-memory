@@ -10,5 +10,11 @@
     "name": "Bob Jones",
     "email": "bob@example.com",
     "notes": "Interested in subscription plans."
+  },
+  {
+    "id": "cust_103",
+    "name": "deekshitha",
+    "email": "deekshitha@example.com",
+    "notes": "New customer added through Hindsight."
   }
 ]
