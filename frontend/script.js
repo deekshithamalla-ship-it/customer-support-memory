@@ -118,6 +118,343 @@ function escapeHtml(text) {
 
 
 /* =========================================================
+   MARKDOWN INLINE FORMATTER
+========================================================= */
+
+function formatInlineMarkdown(text) {
+
+    let html =
+        escapeHtml(text);
+
+
+    /* Bold */
+
+    html =
+        html.replace(
+            /\*\*(.*?)\*\*/g,
+            "<strong>$1</strong>"
+        );
+
+
+    /* Italic */
+
+    html =
+        html.replace(
+            /(?<!\*)\*([^*]+)\*(?!\*)/g,
+            "<em>$1</em>"
+        );
+
+
+    /* Inline code */
+
+    html =
+        html.replace(
+            /`([^`]+)`/g,
+            "<code>$1</code>"
+        );
+
+
+    return html;
+}
+
+
+/* =========================================================
+   MARKDOWN MESSAGE RENDERER
+========================================================= */
+
+function renderMarkdown(text) {
+
+    if (!text) {
+        return "";
+    }
+
+
+    const lines =
+        String(text).split("\n");
+
+
+    let html = "";
+
+    let i = 0;
+
+
+    while (i < lines.length) {
+
+        const line =
+            lines[i];
+
+
+        /* -----------------------------------------
+           MARKDOWN TABLE
+        ----------------------------------------- */
+
+        if (
+            line.trim().startsWith("|") &&
+            i + 1 < lines.length &&
+            lines[i + 1].includes("|")
+        ) {
+
+            const headerCells =
+                line
+                    .split("|")
+                    .slice(1, -1)
+                    .map(function (cell) {
+                        return cell.trim();
+                    });
+
+
+            const separatorCells =
+                lines[i + 1]
+                    .split("|")
+                    .slice(1, -1)
+                    .map(function (cell) {
+                        return cell.trim();
+                    });
+
+
+            const isTable =
+                headerCells.length > 0 &&
+                separatorCells.length ===
+                    headerCells.length &&
+                separatorCells.every(
+                    function (cell) {
+
+                        return /^:?-{3,}:?$/.test(
+                            cell
+                        );
+
+                    }
+                );
+
+
+            if (isTable) {
+
+                html += `
+                    <div class="message-table-wrapper">
+                        <table class="message-table">
+
+                            <thead>
+                                <tr>
+                `;
+
+
+                headerCells.forEach(
+                    function (cell) {
+
+                        html += `
+                            <th>
+                                ${escapeHtml(cell)}
+                            </th>
+                        `;
+
+                    }
+                );
+
+
+                html += `
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                `;
+
+
+                i += 2;
+
+
+                while (
+                    i < lines.length &&
+                    lines[i]
+                        .trim()
+                        .startsWith("|")
+                ) {
+
+                    const cells =
+                        lines[i]
+                            .split("|")
+                            .slice(1, -1)
+                            .map(function (cell) {
+                                return cell.trim();
+                            });
+
+
+                    html += "<tr>";
+
+
+                    cells.forEach(
+                        function (cell) {
+
+                            html += `
+                                <td>
+                                    ${formatInlineMarkdown(
+                                        cell
+                                    )}
+                                </td>
+                            `;
+
+                        }
+                    );
+
+
+                    html += "</tr>";
+
+
+                    i++;
+
+                }
+
+
+                html += `
+                            </tbody>
+
+                        </table>
+                    </div>
+                `;
+
+
+                continue;
+
+            }
+
+        }
+
+
+        /* -----------------------------------------
+           BULLET LIST
+        ----------------------------------------- */
+
+        if (
+            line.trim().startsWith("- ") ||
+            line.trim().startsWith("* ")
+        ) {
+
+            html += "<ul>";
+
+
+            while (
+                i < lines.length &&
+                (
+                    lines[i]
+                        .trim()
+                        .startsWith("- ") ||
+
+                    lines[i]
+                        .trim()
+                        .startsWith("* ")
+                )
+            ) {
+
+                const item =
+                    lines[i]
+                        .trim()
+                        .substring(2);
+
+
+                html += `
+                    <li>
+                        ${formatInlineMarkdown(item)}
+                    </li>
+                `;
+
+
+                i++;
+
+            }
+
+
+            html += "</ul>";
+
+
+            continue;
+
+        }
+
+
+        /* -----------------------------------------
+           NUMBERED LIST
+        ----------------------------------------- */
+
+        if (
+            /^\s*\d+\.\s+/.test(line)
+        ) {
+
+            html += "<ol>";
+
+
+            while (
+                i < lines.length &&
+                /^\s*\d+\.\s+/.test(lines[i])
+            ) {
+
+                const item =
+                    lines[i]
+                        .replace(
+                            /^\s*\d+\.\s+/,
+                            ""
+                        );
+
+
+                html += `
+                    <li>
+                        ${formatInlineMarkdown(item)}
+                    </li>
+                `;
+
+
+                i++;
+
+            }
+
+
+            html += "</ol>";
+
+
+            continue;
+
+        }
+
+
+        /* -----------------------------------------
+           EMPTY LINE
+        ----------------------------------------- */
+
+        if (
+            line.trim() === ""
+        ) {
+
+            html += "<br>";
+
+
+            i++;
+
+
+            continue;
+
+        }
+
+
+        /* -----------------------------------------
+           NORMAL TEXT
+        ----------------------------------------- */
+
+        html += `
+            <div>
+                ${formatInlineMarkdown(line)}
+            </div>
+        `;
+
+
+        i++;
+
+    }
+
+
+    return html;
+
+}
+
+
+/* =========================================================
    FIND MEMORY SECTION
 ========================================================= */
 
@@ -127,6 +464,7 @@ function findMemorySection(title) {
         document.querySelectorAll(
             ".memory-section h3"
         );
+
 
     for (const heading of headings) {
 
@@ -140,9 +478,12 @@ function findMemorySection(title) {
             return heading.parentElement;
 
         }
+
     }
 
+
     return null;
+
 }
 
 
@@ -157,14 +498,17 @@ function updatePreviousIssues(tickets) {
             "Previous Issues"
         );
 
+
     if (!section) {
         return;
     }
+
 
     const oldItems =
         section.querySelectorAll(
             ".memory-item"
         );
+
 
     oldItems.forEach(function (item) {
         item.remove();
@@ -179,17 +523,22 @@ function updatePreviousIssues(tickets) {
         const empty =
             document.createElement("p");
 
+
         empty.className =
             "memory-empty-text";
 
+
         empty.textContent =
             "No previous issues recorded.";
+
 
         section.appendChild(
             empty
         );
 
+
         return;
+
     }
 
 
@@ -197,6 +546,7 @@ function updatePreviousIssues(tickets) {
 
         const item =
             document.createElement("div");
+
 
         item.className =
             "memory-item";
@@ -259,6 +609,7 @@ function updateKnownIssues(issues) {
             "Known Issues"
         );
 
+
     if (!section) {
         return;
     }
@@ -268,6 +619,7 @@ function updateKnownIssues(issues) {
         section.querySelectorAll(
             ".tag"
         );
+
 
     oldTags.forEach(function (tag) {
         tag.remove();
@@ -282,17 +634,22 @@ function updateKnownIssues(issues) {
         const empty =
             document.createElement("p");
 
+
         empty.className =
             "memory-empty-text";
 
+
         empty.textContent =
             "No known issues.";
+
 
         section.appendChild(
             empty
         );
 
+
         return;
+
     }
 
 
@@ -300,6 +657,7 @@ function updateKnownIssues(issues) {
 
         const tag =
             document.createElement("div");
+
 
         tag.className =
             "tag";
@@ -337,6 +695,7 @@ function updateSolutions(solutions) {
             "Solutions That Worked"
         );
 
+
     if (!section) {
         return;
     }
@@ -346,6 +705,7 @@ function updateSolutions(solutions) {
         section.querySelectorAll(
             ".solution"
         );
+
 
     oldSolutions.forEach(function (solution) {
         solution.remove();
@@ -360,17 +720,22 @@ function updateSolutions(solutions) {
         const empty =
             document.createElement("p");
 
+
         empty.className =
             "memory-empty-text";
 
+
         empty.textContent =
             "No previous solutions recorded.";
+
 
         section.appendChild(
             empty
         );
 
+
         return;
+
     }
 
 
@@ -378,6 +743,7 @@ function updateSolutions(solutions) {
 
         const item =
             document.createElement("div");
+
 
         item.className =
             "solution";
@@ -457,6 +823,7 @@ function updateCustomerProfile(customer) {
         const emailValue =
             rows[0].querySelector("strong");
 
+
         if (emailValue) {
 
             emailValue.textContent =
@@ -472,15 +839,13 @@ function updateCustomerProfile(customer) {
         const preferredValue =
             rows[1].querySelector("strong");
 
+
         if (preferredValue) {
 
             /*
                Your customer data currently stores
                notes rather than a dedicated preferred
                contact field.
-
-               Alice's existing data says she prefers
-               email communication.
             */
 
             let preferredContact =
@@ -694,8 +1059,10 @@ function selectCustomer(customerElement) {
     const customerId =
         customerElement.dataset.customerId;
 
+
     const customerName =
         customerElement.dataset.name;
+
 
     const customerEmail =
         customerElement.dataset.email;
@@ -704,8 +1071,10 @@ function selectCustomer(customerElement) {
     currentCustomerId =
         customerId;
 
+
     currentCustomer =
         customerName;
+
 
     currentCustomerEmail =
         customerEmail;
@@ -740,8 +1109,10 @@ function selectCustomer(customerElement) {
     conversationTitle.textContent =
         customerName;
 
+
     conversationAvatar.textContent =
         getInitials(customerName);
+
 
     profileEmail.textContent =
         customerEmail;
@@ -787,6 +1158,7 @@ function setupCustomer(customer) {
 
             }
 
+
             selectCustomer(
                 customer
             );
@@ -805,8 +1177,10 @@ function setupCustomer(customer) {
 
                 event.stopPropagation();
 
+
                 selectedCustomerElement =
                     customer;
+
 
                 showCustomerContextMenu(
                     customer,
@@ -866,6 +1240,7 @@ customerSearch.addEventListener(
                 .trim()
                 .toLowerCase();
 
+
         let visibleCount = 0;
 
 
@@ -876,6 +1251,7 @@ customerSearch.addEventListener(
                 const name =
                     customer.dataset.name
                         .toLowerCase();
+
 
                 const email =
                     customer.dataset.email
@@ -920,6 +1296,7 @@ function openCustomerModal() {
     addCustomerModal.style.display =
         "flex";
 
+
     newCustomerName.focus();
 
 }
@@ -930,8 +1307,10 @@ function closeCustomerModalWindow() {
     addCustomerModal.style.display =
         "none";
 
+
     newCustomerName.value =
         "";
+
 
     newCustomerEmail.value =
         "";
@@ -990,6 +1369,7 @@ customerForm.addEventListener(
         const name =
             newCustomerName.value.trim();
 
+
         const email =
             newCustomerEmail.value.trim();
 
@@ -1000,7 +1380,9 @@ customerForm.addEventListener(
                 "Please enter the customer name."
             );
 
+
             newCustomerName.focus();
+
 
             return;
 
@@ -1013,7 +1395,9 @@ customerForm.addEventListener(
                 "Please enter the customer email."
             );
 
+
             newCustomerEmail.focus();
+
 
             return;
 
@@ -1022,6 +1406,7 @@ customerForm.addEventListener(
 
         saveCustomer.disabled =
             true;
+
 
         saveCustomer.textContent =
             "Adding...";
@@ -1086,8 +1471,10 @@ customerForm.addEventListener(
             customer.dataset.customerId =
                 customerData.id;
 
+
             customer.dataset.name =
                 customerData.name;
+
 
             customer.dataset.email =
                 customerData.email;
@@ -1144,6 +1531,7 @@ customerForm.addEventListener(
             customerSearch.value =
                 "";
 
+
             noCustomers.style.display =
                 "none";
 
@@ -1191,6 +1579,7 @@ customerForm.addEventListener(
             saveCustomer.disabled =
                 false;
 
+
             saveCustomer.textContent =
                 "Add Customer";
 
@@ -1216,12 +1605,14 @@ function showCustomerContextMenu(
     let x =
         event.clientX;
 
+
     let y =
         event.clientY;
 
 
     const menuWidth =
         175;
+
 
     const menuHeight =
         90;
@@ -1256,6 +1647,7 @@ function showCustomerContextMenu(
     customerContextMenu.style.left =
         x + "px";
 
+
     customerContextMenu.style.top =
         y + "px";
 
@@ -1277,6 +1669,7 @@ viewCustomer.addEventListener(
 
         const name =
             selectedCustomerElement.dataset.name;
+
 
         const email =
             selectedCustomerElement.dataset.email;
@@ -1368,14 +1761,18 @@ deleteCustomer.addEventListener(
             currentCustomerId =
                 null;
 
+
             conversationTitle.textContent =
                 "No Customer";
+
 
             conversationAvatar.textContent =
                 "--";
 
+
             profileEmail.textContent =
                 "";
+
 
             messages.innerHTML = `
 
@@ -1398,6 +1795,7 @@ deleteCustomer.addEventListener(
 
             `;
 
+
             memoryList.innerHTML = `
 
                 <div class="memory-empty">
@@ -1418,6 +1816,7 @@ deleteCustomer.addEventListener(
                 </div>
 
             `;
+
 
             memoryCount.textContent =
                 "0";
@@ -1488,8 +1887,16 @@ function addMessage(
         "message " + sender;
 
 
-    message.textContent =
-        text;
+    /*
+       Render AI Markdown instead of
+       displaying it as plain text.
+
+       This allows tables, bold text,
+       lists, and inline code to render.
+    */
+
+    message.innerHTML =
+        renderMarkdown(text);
 
 
     row.appendChild(
@@ -1522,6 +1929,7 @@ function addLoadingMessage() {
 
     row.className =
         "message-row assistant";
+
 
     row.id =
         "loadingMessage";
@@ -1616,6 +2024,7 @@ function displayMemories(
 
         `;
 
+
         return;
 
     }
@@ -1685,6 +2094,7 @@ async function sendMessage() {
         alert(
             "Please select a customer first."
         );
+
 
         return;
 
@@ -1806,6 +2216,7 @@ async function sendMessage() {
         sendButton.disabled =
             false;
 
+
         messageInput.focus();
 
     }
@@ -1838,6 +2249,7 @@ messageInput.addEventListener(
 
             event.preventDefault();
 
+
             sendMessage();
 
         }
@@ -1857,6 +2269,7 @@ messageInput.addEventListener(
         this.style.height =
             "auto";
 
+
         this.style.height =
             Math.min(
                 this.scrollHeight,
@@ -1865,3 +2278,4 @@ messageInput.addEventListener(
 
     }
 );
+
